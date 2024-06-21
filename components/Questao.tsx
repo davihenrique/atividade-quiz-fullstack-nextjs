@@ -1,6 +1,9 @@
-import styles from '../styles/Questao.module.css'
+import styles from "../styles/Questao.module.css";
 import QuestaoModel from "../model/questao";
-import Resposta from './Resposta';
+import questoes from "../pages/api/bancoDeQuestoes";
+import Enunciado from "./Enunciado";
+import Resposta from "./Resposta";
+import Temporizador from "./Temporizador";
 
 const letras = [
   { valor: "A", cor: "#F2C866" },
@@ -12,31 +15,32 @@ const letras = [
 interface QuestaoProps {
   valor: QuestaoModel;
   respostaFornecida: (indice: number) => void;
+  temporEsgotado: () => void;
 }
 
 export default function Questao(props: QuestaoProps) {
-    const questao = props.valor
+  const questao = props.valor;
 
-    function rederizarRespostas(){
-        return questao.respostas.map((resposta, i) => {
-          return (
-            <Resposta
-              key={i}
-              valor={resposta}
-              indice={i}
-              letra={letras[i].valor}
-              corFundoLetra={letras[i].cor}
-              respostaFornecida={props.respostaFornecida}
-            />
-          )
-        });
-    }
+  function rederizarRespostas() {
+    return questao.respostas.map((r, i) => {
+      return (
+        <Resposta
+          key={i}
+          valor={r}
+          indice={i}
+          letra={letras[i].valor}
+          corFundoLetra={letras[i].cor}
+          respostaFornecida={props.respostaFornecida}
+        />
+      );
+    });
+  }
 
-    return (
-      <div className={styles.questao}>
-        <h1>Questao</h1>
-        {rederizarRespostas()}
-      </div>
-    );
-
+  return (
+    <div className={styles.questao}>
+      <Enunciado texto={questao.enunciado} />
+      <Temporizador duracao={10} tempoEsgotado={props.temporEsgotado} />
+      {rederizarRespostas()}
+    </div>
+  );
 }

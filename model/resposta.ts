@@ -10,7 +10,7 @@ export default class RespostaModel {
   }
 
   static certa(valor: string) {
-    return new RespostaModel(valor, true)
+    return new RespostaModel(valor, true);
   }
 
   static errada(valor: string) {
@@ -29,17 +29,15 @@ export default class RespostaModel {
     return this.#revelada;
   }
 
-  revelar(){
-    return new RespostaModel(this.#valor, this.#certa, true)
+  revelar() {
+    return new RespostaModel(this.#valor, this.#certa, true);
   }
-  
-  paraObjeto(){
-    return{
+
+  paraObjeto() {
+    return {
       valor: this.#valor,
       certa: this.#certa,
-      revelada: this.#revelada
-    }
+      revelada: this.#revelada,
+    };
   }
-
-
 }
