@@ -1,6 +1,5 @@
 import styles from "../styles/Questao.module.css";
 import QuestaoModel from "../model/questao";
-import questoes from "../pages/api/bancoDeQuestoes";
 import Enunciado from "./Enunciado";
 import Resposta from "./Resposta";
 import Temporizador from "./Temporizador";
@@ -13,10 +12,10 @@ const letras = [
 ];
 
 interface QuestaoProps {
-  valor: QuestaoModel
-  tempoPraResposta?: number
-  respostaFornecida: (indice: number) => void
-  temporEsgotado: () => void
+  valor: QuestaoModel;
+  tempoPraResposta?: number;
+  respostaFornecida: (indice: number) => void;
+  temporEsgotado: () => void;
 }
 
 export default function Questao(props: QuestaoProps) {
@@ -40,8 +39,10 @@ export default function Questao(props: QuestaoProps) {
   return (
     <div className={styles.questao}>
       <Enunciado texto={questao.enunciado} />
-      <Temporizador duracao={props.tempoPraResposta ?? 10}
-      tempoEsgotado={props.temporEsgotado} />
+      <Temporizador
+        duracao={props.tempoPraResposta ?? 10}
+        tempoEsgotado={props.temporEsgotado}
+      />
       {rederizarRespostas()}
     </div>
   );

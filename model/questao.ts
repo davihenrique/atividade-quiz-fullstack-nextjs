@@ -33,11 +33,11 @@ export default class QuestaoModel {
   }
 
   get acertou() {
-    return this.acertou;
+    return this.#acertou;
   }
 
   get naoRespondida() {
-    return !this.respondida;
+    return !this.#respondida;
   }
 
   get respondida() {
@@ -65,6 +65,11 @@ export default class QuestaoModel {
       respostasEmbaralhadas,
       this.#acertou
     );
+  }
+
+  static criarUsandoObjeto(obj: QuestaoModel): QuestaoModel {
+    const respostas = obj.respostas.map(r => RespostaModel.criarUsandoObjeto(r))
+    return new QuestaoModel(obj.id, obj.enunciado, respostas, obj.acertou);
   }
 
   paraObjeto() {

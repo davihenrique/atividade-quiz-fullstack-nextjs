@@ -1,10 +1,7 @@
-import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.css";
-import Questao from "../components/Questao";
 import QuestaoModel from "../model/questao";
 import RespostaModel from "../model/resposta";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Questionario from "../components/Questionario";
 
 const questaoMock = new QuestaoModel(1, "Qual É a Melhor cor?", [
   RespostaModel.errada("Verde"),
@@ -13,35 +10,49 @@ const questaoMock = new QuestaoModel(1, "Qual É a Melhor cor?", [
   RespostaModel.certa("Preta"),
 ]);
 
+const BASE_URL = "http://localhost:3000/api";
+
 export default function Home() {
-  const [questao, setQuestao] = useState(questaoMock);
+  const [idsDasQuestoes, setIdsDasQuestoes] = useState<number[]>([]);
+  const [questao, setQuestao] = useState<QuestaoModel>(questaoMock);
+  const [respostasCertas, setRespostasCertas] = useState<number>(0);
 
-  function respostaFornecida(indice: number) {
-    setQuestao(questao.responderCom(indice));
-    console.log(indice);
+  async function carregarIdsDasQuestoes() {
+    const resp = await fetch(`${BASE_URL}/questionario`);
+    const idsDasQuestoes = await resp.json();
+    setIdsDasQuestoes(idsDasQuestoes);
   }
 
-  function tempoEsgotado() {
-    if (questao.naoRespondida) {
-      setQuestao(questao.responderCom(-1));
-    }
+  async function carregarQuestao(idQuestao: number) {
+    const resp = await fetch(`${BASE_URL}/questoes/${idQuestao}`);
+    const json = await resp.json();
+    const novaQuestao = QuestaoModel.criarUsandoObjeto(json);
+    setQuestao(novaQuestao);
+    console.log(novaQuestao.acertou);
   }
+
+  function questaoRespondida(questaoRespondida: QuestaoModel) {
+    setQuestao(questaoRespondida);
+    const acertou = questaoRespondida.acertou;
+    setRespostasCertas(respostasCertas + (acertou ? 1 : 0));
+  }
+
+  function irPraProximoPasso() {}
+
+  useEffect(() => {
+    carregarIdsDasQuestoes();
+  }, []);
+
+  useEffect(() => {
+    idsDasQuestoes.length > 0 && carregarQuestao(idsDasQuestoes[0]);
+  }, [idsDasQuestoes]);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-      }}
-    >
-      <Questao
-        valor={questao}
-        tempoPraResposta={5}
-        respostaFornecida={respostaFornecida}
-        temporEsgotado={tempoEsgotado}
-      />
-    </div>
+    <Questionario
+      questao={questao}
+      ultima={false}
+      questaoRespondida={questaoRespondida}
+      irPraProximoPasso={irPraProximoPasso}
+    />
   );
 }
